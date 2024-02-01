@@ -21,11 +21,11 @@ func init() {
 
 func Cors(origins ...string) {
 	config := cors.DefaultConfig()
-  	config.AllowOrigins = origins
-  	config.AllowMethods = []string{"PUT", "DELETE", "POST", "GET"}
-  	config.AllowCredentials = true
+	config.AllowOrigins = origins
+	config.AllowMethods = []string{"PUT", "DELETE", "POST", "GET"}
+	config.AllowCredentials = true
 
-  	router.Use(cors.New(config))
+	router.Use(cors.New(config))
 }
 
 func GuestRoutes() {

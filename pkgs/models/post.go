@@ -15,7 +15,7 @@ type Post struct {
 	CategoryID uint          `json:"category_id" form:"category_id"`
 	UserID     uint          `json:"user_id" form:"user_id"`
 	Thumbnail  string        `json:"thumbnail" form:"thumbnail"`
-	Tags       []*Tag         `json:"tags,omitempty" form:"tags" gorm:"many2many:post_tags"`
+	Tags       []*Tag        `json:"tags,omitempty" form:"tags" gorm:"many2many:post_tags"`
 	Body       template.HTML `json:"body" form:"body"`
 }
 

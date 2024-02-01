@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"net/http"
 	"strings"
-	
+
 	"github.com/coderunne/jwt-login/pkgs/models"
 	"github.com/gin-gonic/gin"
 )

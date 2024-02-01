@@ -14,9 +14,9 @@ type Tag struct {
 }
 
 var (
-	ErrInvalidTagID  = errors.New("Provided Tag ID does not exist")
+	ErrInvalidTagID      = errors.New("Provided Tag ID does not exist")
 	ErrTagResultNotFound = errors.New("Tag ID not found in the database")
-	ErrCreateTag     = errors.New("Error Adding Tag To The Database")
+	ErrCreateTag         = errors.New("Error Adding Tag To The Database")
 )
 
 func CreateTag(tag *Tag) error {

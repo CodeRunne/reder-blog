@@ -13,7 +13,7 @@ import (
 
 var (
 	ErrPasswordNotMatch = errors.New("Provided password does not match!")
-	ErrProfileNotFound = errors.New("Profile picture is required for account!")
+	ErrProfileNotFound  = errors.New("Profile picture is required for account!")
 	ErrBinding          = errors.New("Error binding data!")
 )
 
