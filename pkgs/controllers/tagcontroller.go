@@ -9,17 +9,17 @@ import (
 )
 
 func TagCreateController(c *gin.Context) {
-	var category models.Category
+	var tag models.Tag
 
 	// Bind data to struct
-	if err := c.BindJSON(&category); err != nil {
+	if err := c.BindJSON(&tag); err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{
 			"error": err.Error(),
 		})
 		return
 	}
 
-	err := models.CreateCategory(&category)
+	err := models.CreateTag(&tag)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"error": err.Error(),
@@ -28,7 +28,7 @@ func TagCreateController(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusOK, gin.H{
-		"message": "Category Created Successfully",
+		"message": "Tag Created Successfully",
 	})
 }
 

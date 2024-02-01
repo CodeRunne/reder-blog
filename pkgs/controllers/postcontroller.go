@@ -46,17 +46,30 @@ func PostCreateController(c *gin.Context) {
 
 	// Get Form Data
 	title := c.PostForm("title")
-	cID, _ := strconv.Atoi(c.PostForm("category_id"))
+	categoryID, _ := strconv.Atoi(c.PostForm("category_id"))
 	body := c.PostForm("body")
+	post_tags := c.PostForm("tags")
 
-	var tags []models.Tag
-	if strings.Contains(c.PostForm("tags"), ",") {
-		tags = append(tags, strings.Split(c.PostForm("tags"), ",")...)
-	} else {
-		tags = append(tags, strings.Fields(strings)...)
+	// Tags array
+	var tags []*models.Tag
+
+	// convert string to array
+	ids := strings.Split(strings.TrimSpace(post_tags), ",")
+	for _, id := range ids {
+		// Convert to int
+		tag_id, _ := strconv.Atoi(id)
+		// check if tag id exists
+		tag, err := models.GetTag(uint(tag_id))
+		if err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"error": err.Error(),
+			})
+			return
+		}
+
+		// append to tags array
+		tags = append(tags, tag)
 	}
-
-	fmt.Println(tags)
 
 	// Get post thumbnail file
 	file, err := c.FormFile("thumbnail")
@@ -70,7 +83,6 @@ func PostCreateController(c *gin.Context) {
 	// Store post thumbnail
 	ext := filepath.Ext(file.Filename)
 	filename := fmt.Sprintf("%d%s", time.Now().UnixNano(), ext)
-	fmt.Println(filename, ext)
 	path := filepath.Join("storage/posts", filename)
 	if err := c.SaveUploadedFile(file, path); err != nil {
 		c.String(http.StatusBadRequest, "upload file err: %s", err.Error())
@@ -78,7 +90,7 @@ func PostCreateController(c *gin.Context) {
 	}
 
 	// check if category exists
-	_, err = models.GetCategory(uint(cID))
+	_, err = models.GetCategory(uint(categoryID))
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"error": err.Error(),
@@ -89,10 +101,10 @@ func PostCreateController(c *gin.Context) {
 	// Assign data to struct
 	post.Title = title
 	post.Slug = strings.ToLower(strings.Replace(title, " ", "-", -1))
-	post.CategoryID = uint(cID)
+	post.CategoryID = uint(categoryID)
 	post.UserID = user.ID
 	post.Body = template.HTML(body)
-	// post.Tags = append(post.Tags, tags)
+	post.Tags = tags
 	post.Thumbnail = filename
 
 	// Create Post
@@ -115,7 +127,7 @@ func PostUpdateController(c *gin.Context) {
 	slug := c.Param("slug")
 	// Get Form Data
 	title := c.PostForm("title")
-	cID, _ := strconv.Atoi(c.PostForm("category_id"))
+	categoryID, _ := strconv.Atoi(c.PostForm("category_id"))
 	body := c.PostForm("body")
 
 	// Get post thumbnail file
@@ -157,7 +169,7 @@ func PostUpdateController(c *gin.Context) {
 	}
 
 	// check if category exists
-	_, err = models.GetCategory(uint(cID))
+	_, err = models.GetCategory(uint(categoryID))
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"error": err.Error(),
@@ -169,7 +181,7 @@ func PostUpdateController(c *gin.Context) {
 	var post models.Post
 	post.Title = title
 	post.Slug = strings.ToLower(strings.Replace(title, " ", "-", -1))
-	post.CategoryID = uint(cID)
+	post.CategoryID = uint(categoryID)
 	post.Body = template.HTML(body)
 	post.Thumbnail = filename
 

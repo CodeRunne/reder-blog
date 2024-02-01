@@ -9,10 +9,8 @@ import (
 
 func main() {
 
-	var FRONTEND_URL = os.Getenv("FRONTEND_URL")
-	
 	// Define cors for the application
-	origins := []string{FRONTEND_URL}
+	origins := []string{ os.Getenv("FRONTEND_URL") }
 	routes.Cors(origins...)
 
 	// Define application routes
@@ -23,4 +21,5 @@ func main() {
 	routes.PostRoutes()
 	routes.DashboardRoutes()
 	routes.Start(":3000")
+	
 }

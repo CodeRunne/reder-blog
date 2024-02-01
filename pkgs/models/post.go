@@ -15,7 +15,7 @@ type Post struct {
 	CategoryID uint          `json:"category_id" form:"category_id"`
 	UserID     uint          `json:"user_id" form:"user_id"`
 	Thumbnail  string        `json:"thumbnail" form:"thumbnail"`
-	Tags       []Tag         `json:"tags" form:"tags" gorm:"many2many:post_tags"`
+	Tags       []*Tag         `json:"tags,omitempty" form:"tags" gorm:"many2many:post_tags"`
 	Body       template.HTML `json:"body" form:"body"`
 }
 
@@ -35,7 +35,7 @@ func CreatePost(post *Post) error {
 
 func GetAllPosts() ([]*Post, error) {
 	var posts []*Post
-	result := database.DB.Model(&Post{}).Find(&posts)
+	result := database.DB.Model(&Post{}).Preload("Tags").Find(&posts)
 	if result.Error != nil {
 		return posts, result.Error
 	}
@@ -49,7 +49,7 @@ func GetPostByID(id uint) (*Post, error) {
 	}
 
 	// Retrieve user using the provided id
-	result := database.DB.Model(&Post{}).Where("id = ?", id).Scan(&post)
+	result := database.DB.Model(&Post{}).Preload("Tags").Where("id = ?", id).Scan(&post)
 	if result.Error != nil {
 		return &Post{}, result.Error
 	} else if result.RowsAffected == 0 {
@@ -62,7 +62,7 @@ func GetPostByID(id uint) (*Post, error) {
 func GetPostBySlug(slug string) (*Post, error) {
 	// Retrieve user using the provided id
 	var post *Post
-	result := database.DB.Model(&Post{}).Where("slug = ?", slug).Scan(&post)
+	result := database.DB.Model(&Post{}).Preload("Tags").Where("slug = ?", slug).Scan(&post)
 	if result.Error != nil {
 		return &Post{}, result.Error
 	} else if result.RowsAffected == 0 {

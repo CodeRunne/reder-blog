@@ -30,7 +30,7 @@ func RegisterController(c *gin.Context) {
 	file, err := c.FormFile("profile")
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
-			"error": ErrProfileNotFound,
+			"error": ErrProfileNotFound.Error(),
 		})
 		return
 	}
@@ -102,6 +102,16 @@ func RegisterController(c *gin.Context) {
 }
 
 func LoginController(c *gin.Context) {
+
+	// Check if cookie has already been set
+	auth, err := c.Cookie("Authorization")
+	if auth != "" && err == nil {
+		c.JSON(http.StatusOK, gin.H{
+			"message": "Login session has already been set",
+		})
+		return
+	}
+
 	var user models.User
 	if err := c.BindJSON(&user); err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{
@@ -130,7 +140,7 @@ func LoginController(c *gin.Context) {
 	// Compare passwords
 	if err = bcrypt.CompareHashAndPassword([]byte(db_user.Password), []byte(user.Password)); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
-			"error": ErrPasswordNotMatch,
+			"error": ErrPasswordNotMatch.Error(),
 		})
 		return
 	}

@@ -10,7 +10,7 @@ import (
 type Tag struct {
 	*gorm.Model
 	Name  string `json:"name"`
-	Posts []Post `json:"posts" gorm:"many2many:post_tags"`
+	Posts []Post `json:"posts,omitempty" gorm:"many2many:post_tags"`
 }
 
 var (
